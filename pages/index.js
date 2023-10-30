@@ -9,3 +9,7 @@ export default function HomePage() {
     </div>
   );
 }
+
+export function getServerSideProps () {
+  
+}
