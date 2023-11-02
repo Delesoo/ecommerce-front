@@ -5,6 +5,7 @@ import Button from "@/components/Button";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/components/CartContext";
 import axios from 'axios';
+import Table from "@/components/Table";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -19,8 +20,31 @@ const Box = styled.div`
     padding: 30px;
 `;
 
+const ProductInfoCell = styled.td`
+    padding: 10px 0;
+`;
+
+const ProductImageBox = styled.div`
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    border: 2px solid rgba(0,0,0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    img{
+        max-width: 80px;
+        max-height:  80px;
+    }
+`;
+
+const QuantityLabel = styled.span`
+    padding: 0 3px;
+`;
+
 export default function CartPage() {
-    const {cartProducts} = useContext(CartContext);
+    const {cartProducts,addProduct,removeProduct} = useContext(CartContext);
     const [products,setProducts] = useState ([]);
     useEffect(() => {
         if (cartProducts.length > 0) {
@@ -30,22 +54,52 @@ export default function CartPage() {
             })
         }
     }, [cartProducts])
+    function moreOfThisProduct(id) {
+        addProduct(id);
+    }
+    function lessOfThisProduct(id) {
+        removeProduct(id);
+    }
     return (
         <>
             <Header />
             <Center>
             <ColumnsWrapper>
                 <Box>
+                    <h2>Cart</h2>
                     {!cartProducts?.length && (
                         <div>Your cart is empty</div>
                     )}
                     {products?.length > 0 && (
-                        <>
-                            <h2>Cart</h2>
-                            {products.map(product => (
-                                <div>{product.title}: {cartProducts.filter(id => id === product._id).length} </div>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {products.map(product => (
+                                <tr>
+                                    <ProductInfoCell>
+                                        <ProductImageBox>
+                                        <img src={product.images[0]} alt=""/>
+                                        </ProductImageBox>
+                                        {product.title}
+                                    </ProductInfoCell>
+                                    <td>
+                                        <Button onClick={() => lessOfThisProduct(product._id)}>-</Button>
+                                        <QuantityLabel>
+                                        {cartProducts.filter(id => id === product._id).length} 
+                                        </QuantityLabel>    
+                                        <Button onClick={() => moreOfThisProduct(product._id)}>+</Button>
+                                    </td>
+                                    <td>${cartProducts.filter(id => id === product._id).length * product.price}</td>
+                                </tr>
                             ))}
-                        </>
+                        </tbody>
+                    </Table>
                     )}
                 </Box>
                 {!!cartProducts?.length && (
