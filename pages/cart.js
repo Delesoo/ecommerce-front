@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/components/CartContext";
 import axios from 'axios';
 import Table from "@/components/Table";
+import Input from "@/components/Input";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -43,9 +44,20 @@ const QuantityLabel = styled.span`
     padding: 0 3px;
 `;
 
+const CityHolder = styled.div`
+    display: flex;
+    gap: 5px;
+`;
+
 export default function CartPage() {
     const {cartProducts,addProduct,removeProduct} = useContext(CartContext);
     const [products,setProducts] = useState ([]);
+    const [name,setName] = useState([]);
+    const [email,setEmail] = useState([]);
+    const [city,setCity] = useState([]);
+    const [postalCode,setPostalcode] = useState([]);
+    const [streetAddress,setStreetAddress] = useState([]);
+    const [country,setCountry] = useState([]);
     useEffect(() => {
         if (cartProducts.length > 0) {
             axios.post('/api/cart', {ids:cartProducts})
@@ -59,6 +71,11 @@ export default function CartPage() {
     }
     function lessOfThisProduct(id) {
         removeProduct(id);
+    }
+    let total = 0;
+    for (const productId of cartProducts) {
+        const price = products.find(p => p._id === productId)?.price || 0;
+        total += price;
     }
     return (
         <>
@@ -98,6 +115,11 @@ export default function CartPage() {
                                     <td>${cartProducts.filter(id => id === product._id).length * product.price}</td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>${total}</td>
+                            </tr>
                         </tbody>
                     </Table>
                     )}
@@ -105,8 +127,15 @@ export default function CartPage() {
                 {!!cartProducts?.length && (
                 <Box>
                     <h2>Order Information</h2>
-                    <input type="text" placeholder="Adress"></input>
-                    <input type="text" placeholder="Adress 2"></input>
+                    <Input type="text" placeholder="Name" value={name} onChange={ev => setName(ev.target.value)}></Input>
+                    <Input type="text" placeholder="Email" value={email} onChange={ev => setEmail(ev.target.value)}></Input>
+                    <CityHolder>
+                        <Input type="text" placeholder="City" value={city} onChange={ev => setCity(ev.target.value)}></Input>
+                        <Input type="text" placeholder="Postal Code" value={postalCode} onChange={ev => setPostalcode(ev.target.value)}></Input>
+                    </CityHolder>         
+                    <Input type="text" placeholder="Street Address" value={streetAddress} onChange={ev => setStreetAddress(ev.target.value)}></Input>
+                    <Input type="text" placeholder="Country" value={country} onChange={ev => setCountry(ev.target.value)}></Input>
+
                     <Button black block>Continue to payment</Button>
                 </Box>
                 )}
