@@ -138,7 +138,10 @@ export default function CartPage() {
                     </CityHolder>         
                     <Input type="text" placeholder="Street Address" value={streetAddress} name={streetAddress} onChange={ev => setStreetAddress(ev.target.value)}></Input>
                     <Input type="text" placeholder="Country" value={country} name={country} onChange={ev => setCountry(ev.target.value)}></Input>
-
+                    <input 
+                        type="hidden" 
+                        name="products" 
+                        value={cartProducts.join(',')}></input>
                     <Button black block type='submit'>Continue to payment</Button>
                     </form>
                 </Box>
