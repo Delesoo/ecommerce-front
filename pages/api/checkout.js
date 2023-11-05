@@ -1,14 +1,16 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Products";
+import { Order } from "@/models/Order";
+const stripe = require('stripe')(process.env.STRIPE_SK);
 
 export default async function handler(req,res) {
     if (req.method !== 'POST') {
         res.json('should be a POST request');
         return;
     }
-    const {name,email,city,postalCode,products,streetAddress,country} = req.body;
+    const {name,email,city,postalCode,cartProducts,streetAddress,country} = req.body;
     await mongooseConnect();
-    const productsIds = products.split(',');
+    const productsIds = cartProducts;
     const uniqueIds = [...new Set(productsIds)];
     const productsInfos = await Product.find({_id:uniqueIds});
 
@@ -22,12 +24,28 @@ export default async function handler(req,res) {
                 price_data: {
                     currency: 'USD',
                     product_data: {name:productInfo.title},
-                    unit_amount: quantity * productInfo.price,
+                    unit_amount: quantity * productInfo.price * 100,
                 },
             });
         }
     }
     
-    res.json({line_items});
+    const orderDoc = await Order.create({
+        line_items,name,email,city,postalCode,streetAddress,country,paid:false,
+    });
+    
+    const session = await stripe.checkout.sessions.create({
+        line_items,
+        mode: 'payment',
+        customer_email: email,
+        success_url: process.env.PUBLIC_URL + '/cart?success=true',
+        cancel_url: process.env.PUBLIC_URL + '/cart?canceled=true',
+        metadata: {orderId:orderDoc._id.toString()},
+    });
+
+    res.json({
+        url:session.url,
+    })
+
 }
 

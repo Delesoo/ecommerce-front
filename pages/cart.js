@@ -74,6 +74,15 @@ export default function CartPage() {
     function lessOfThisProduct(id) {
         removeProduct(id);
     }
+    async function goToPayment() {
+        const response = await axios.post('/api/checkout', {
+            name,email,city,postalCode,streetAddress,country,
+            cartProducts,
+        });
+        if (response.data.url) {
+            window.location = response.data.url;
+        }
+    }
     let total = 0;
     for (const productId of cartProducts) {
         const price = products.find(p => p._id === productId)?.price || 0;
@@ -129,7 +138,7 @@ export default function CartPage() {
                 {!!cartProducts?.length && (
                 <Box>
                     <h2>Order Information</h2>
-                    <form method="post" action="/api/checkout">
+                    
                     <Input type="text" placeholder="Name" value={name} name={name} onChange={ev => setName(ev.target.value)}></Input>
                     <Input type="text" placeholder="Email" value={email} name={email} onChange={ev => setEmail(ev.target.value)}></Input>
                     <CityHolder>
@@ -138,12 +147,7 @@ export default function CartPage() {
                     </CityHolder>         
                     <Input type="text" placeholder="Street Address" value={streetAddress} name={streetAddress} onChange={ev => setStreetAddress(ev.target.value)}></Input>
                     <Input type="text" placeholder="Country" value={country} name={country} onChange={ev => setCountry(ev.target.value)}></Input>
-                    <input 
-                        type="hidden" 
-                        name="products" 
-                        value={cartProducts.join(',')}></input>
-                    <Button black block type='submit'>Continue to payment</Button>
-                    </form>
+                    <Button black block onClick={goToPayment}>Continue to payment</Button>
                 </Box>
                 )}
             </ColumnsWrapper>

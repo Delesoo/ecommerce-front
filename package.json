@@ -13,6 +13,7 @@
     "next": "14.0.0",
     "react": "^18",
     "react-dom": "^18",
+    "stripe": "^14.3.0",
     "styled-components": "^6.1.0"
   },
   "devDependencies": {
