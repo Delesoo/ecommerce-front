@@ -88,6 +88,22 @@ export default function CartPage() {
         const price = products.find(p => p._id === productId)?.price || 0;
         total += price;
     }
+
+    if (window.location.href.includes('success')) {
+        return (
+            <>
+                <Header />
+                <Center>
+                    <ColumnsWrapper>
+                        <Box>
+                            <h1>Your payment is successful!</h1>
+                            <p>Order details has been sent to your Email.</p>
+                        </Box>
+                    </ColumnsWrapper>
+                </Center>
+            </>
+        )
+    }
     return (
         <>
             <Header />
