@@ -24,6 +24,9 @@ const NavLink = styled(Link)`
     color:#aaa;
     text-decoration:none;
     padding: 10px 0;
+    @media screen and (min-width: 768px) {
+        padding: 0;
+    }
 `;
 const StyledNav = styled.nav`
     ${props => props.mobileNavActive ? `

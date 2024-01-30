@@ -13,9 +13,12 @@ import styled from "styled-components";
 
 const ColWrapper = styled.div`
     display: grid;
-    grid-template-columns: .8fr 1.2fr;
+    grid-template-columns: 1fr ;
+    @media screen and (min-width: 768px) {
+        grid-template-columns: .8fr 1.2fr;
+    }
     gap: 40px;
-    margin-top: 40px;
+    margin: 40px 0;
 `;
 const PriceRow = styled.div`
     display: flex;
@@ -35,7 +38,7 @@ export default function ProductPage({product}) {
                 <ColWrapper>
                     <WhiteBox>
                         <ProductImages images={product.images} />
-                        <img style={{maxWidth:'100%'}} src={product.images?.[0]} />
+                        {/* <img style={{maxWidth:'100%'}} src={product.images?.[0]} /> */}
                     </WhiteBox>
                     <div>
                         <Title>{product.title}</Title>
